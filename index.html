@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Barcode Generator</title>
-    <!-- Tailwind CSS for styling -->
+    <title>Barcode Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- JsBarcode library for 1D barcodes -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-    <!-- bwip-js library for 2D codes (QR, Data Matrix) -->
     <script src="https://cdn.jsdelivr.net/npm/bwip-js@4.1.1/dist/bwip-js-min.js"></script>
     <style>
         /* Custom font */
@@ -27,15 +24,13 @@
 
     <div id="mainGrid" class="w-full max-w-7xl mx-auto">
         <header class="text-center mb-10 flex items-center justify-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white"> Barcode Generator</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Barcode Generator</h1>
         </header>
 
-        <!-- Section 0: Custom Barcode Generator -->
         <section class="mb-12">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 border-b-2 border-gray-200 dark:border-gray-700 pb-2">Create Your Own Barcode</h2>
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-8">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-                    <!-- Inputs Column -->
                     <div class="md:col-span-1 space-y-4">
                         <div>
                             <label for="customType" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Barcode Type</label>
@@ -53,7 +48,6 @@
                         </div>
                         <button id="generateCustomBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md transition-colors">Generate</button>
                     </div>
-                    <!-- Result Column -->
                     <div onclick="showFocusedCustom()" class="md:col-span-2 mt-6 md:mt-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 min-h-[180px] cursor-pointer group">
                         <div id="customResultContainer" class="w-full flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
                             <svg id="customBarcodeSvg" class="hidden"></svg>
@@ -66,35 +60,29 @@
             </div>
         </section>
 
-        <!-- Section 1: Common Barcode Symbologies -->
         <section class="mb-12">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 border-b-2 border-gray-200 dark:border-gray-700 pb-2">Common Barcode Symbologies</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-                <!-- Card: Code39 -->
                 <div onclick="showFocusedView('code39')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
                     <h3 class="text-xl font-semibold mb-4 text-amber-600 dark:text-amber-400">Code39</h3>
                     <div class="w-full h-28 flex items-center justify-center"><svg id="code39Barcode"></svg></div>
                     <p id="code39Value" class="mt-4 text-lg font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-md"></p>
                 </div>
-                <!-- Card: Code39 w/ Check Digit -->
                 <div onclick="showFocusedView('code39check')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
                     <h3 class="text-xl font-semibold mb-4 text-sky-600 dark:text-sky-400">Code39 (Check Digit)</h3>
                     <div class="w-full h-28 flex items-center justify-center"><svg id="code39CheckDigitBarcode"></svg></div>
                     <p id="code39CheckDigitValue" class="mt-4 text-lg font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-md"></p>
                 </div>
-                <!-- Card: Code128 -->
                 <div onclick="showFocusedView('code128')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
                     <h3 class="text-xl font-semibold mb-4 text-lime-600 dark:text-lime-400">Code128</h3>
                     <div class="w-full h-28 flex items-center justify-center"><svg id="code128Barcode"></svg></div>
                     <p id="code128Value" class="mt-4 text-lg font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-md"></p>
                 </div>
-                 <!-- Card: QR Code -->
-                <div onclick="showFocusedView('qr')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
+                 <div onclick="showFocusedView('qr')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
                     <h3 class="text-xl font-semibold mb-4 text-fuchsia-600 dark:text-fuchsia-400">QR Code</h3>
                     <div class="w-28 h-28 flex items-center justify-center"><canvas id="qrCode"></canvas></div>
                     <p id="qrCodeValue" class="mt-4 text-sm font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-md break-all"></p>
                 </div>
-                <!-- Card: Data Matrix -->
                 <div onclick="showFocusedView('datamatrix')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
                     <h3 class="text-xl font-semibold mb-4 text-cyan-600 dark:text-cyan-400">Data Matrix</h3>
                     <div class="w-28 h-28 flex items-center justify-center"><canvas id="dataMatrixCode"></canvas></div>
@@ -103,39 +91,43 @@
             </div>
         </section>
 
-        <!-- Section 2: Shipment Tracking Labels -->
         <section>
             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 border-b-2 border-gray-200 dark:border-gray-700 pb-2">Shipment Tracking Labels</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                 <!-- Card: UPS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
                 <div onclick="showFocusedView('ups')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
                     <h3 class="text-xl font-semibold mb-4 text-yellow-500">UPS Tracking</h3>
                     <div class="w-full h-28 flex items-center justify-center"><svg id="upsBarcode"></svg></div>
                     <p id="upsValue" class="mt-4 text-lg font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-md"></p>
                 </div>
-                <!-- Card: FedEx -->
                 <div onclick="showFocusedView('fedex')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
                     <h3 class="text-xl font-semibold mb-4 text-purple-600 dark:text-purple-400">FedEx Tracking</h3>
                     <div class="w-full h-28 flex items-center justify-center"><svg id="fedexBarcode"></svg></div>
                     <p id="fedexValue" class="mt-4 text-lg font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-md"></p>
                 </div>
-                <!-- Card: DHL -->
                 <div onclick="showFocusedView('dhl')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
                     <h3 class="text-xl font-semibold mb-4 text-red-600 dark:text-red-500">DHL Tracking</h3>
                     <div class="w-full h-28 flex items-center justify-center"><svg id="dhlBarcode"></svg></div>
                     <p id="dhlValue" class="mt-4 text-lg font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-md"></p>
                 </div>
-                <!-- Card: Marken -->
                 <div onclick="showFocusedView('marken')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
                     <h3 class="text-xl font-semibold mb-4 text-green-600 dark:text-green-400">Marken Tracking</h3>
                     <div class="w-full h-28 flex items-center justify-center"><svg id="markenBarcode"></svg></div>
                     <p id="markenValue" class="mt-4 text-lg font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-md"></p>
                 </div>
+                 <div onclick="showFocusedView('worldcourier')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">World Courier</h3>
+                    <div class="w-full h-28 flex items-center justify-center"><svg id="worldCourierBarcode"></svg></div>
+                    <p id="worldCourierValue" class="mt-4 text-lg font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-md"></p>
+                </div>
+                <div onclick="showFocusedView('quickstat')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
+                    <h3 class="text-xl font-semibold mb-4 text-indigo-600 dark:text-indigo-400">Quickstat</h3>
+                    <div class="w-full h-28 flex items-center justify-center"><svg id="quickstatBarcode"></svg></div>
+                    <p id="quickstatValue" class="mt-4 text-lg font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-md"></p>
+                </div>
             </div>
         </section>
     </div>
 
-    <!-- Focused View (Modal) -->
     <div id="focusedView" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex-col items-center justify-center p-8 hidden z-50">
         <h2 id="focusedTitle" class="text-4xl font-bold text-white mb-8"></h2>
         <div id="focusedBarcodeContainer" class="bg-white p-8 rounded-lg">
@@ -176,27 +168,22 @@
             return generateRandomString(length, '0123456789');
         }
 
-        function generateRandomUpperCase(length) {
-            return generateRandomString(length, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-        }
-
         // --- Barcode Generation Logic ---
         function generateCode39Value() { return generateRandomAlphanumeric(GENERIC_BARCODE_LENGTH, true); }
         function generateCode128Value() { return generateRandomAlphanumeric(GENERIC_BARCODE_LENGTH); }
         function generate2DCodeValue() { return generateRandomAlphanumeric(QR_DATA_LENGTH); }
 
-        function generateUPSTracking() { return '1Z' + generateRandomAlphanumeric(15, true); }
-        function generateFedExTracking() { return generateRandomNumeric(15); }
-        function generateDHLTracking() {
-            const origin = generateRandomUpperCase(3);
-            const hawbLength = Math.floor(Math.random() * 4) + 7;
-            const hawb = generateRandomNumeric(hawbLength);
-            return origin + hawb;
+        // --- CORRECTED AWB GENERATORS ---
+        function generateUPSTracking() { return '1Z' + generateRandomAlphanumeric(16, true); } // Regex: ^(1Z[\dA-Z]{16})$
+        function generateFedExTracking() { return generateRandomNumeric(12); } // Regex: ^\d{10,}$ (using common 12-digit format)
+        function generateDHLTracking() { return generateRandomNumeric(10); } // Regex: ^[\dA-Za-z]{7,}$ (using common 10-digit format)
+        function generateMarkenTracking() { return generateRandomNumeric(3) + 'X' + generateRandomNumeric(8); } // Regex: ^([\d]{3}X[\d]{8})$
+        function generateWorldCourierTracking() {
+            const length = Math.floor(Math.random() * 3) + 9; // Random length: 9, 10, or 11
+            return generateRandomNumeric(length); // Regex: ^\d{9,11}$
         }
-        function generateMarkenTracking() {
-            const length = Math.floor(Math.random() * (25 - 8 + 1)) + 8; // Random length between 8 and 25
-            return generateRandomAlphanumeric(length, true);
-        }
+        function generateQuickstatTracking() { return generateRandomNumeric(9) + 'W'; } // Regex: ^\d{9}W$
+
 
         // --- Rendering Functions ---
         function render1DBarcode(elementId, value, options = {}) {
@@ -213,8 +200,8 @@
              const canvas = document.getElementById(elementId);
              if (!canvas) return;
              const defaultOptions = {
-                bcid: type, text: value, scale: 3,
-                height: 10, width: 10, includetext: false,
+                 bcid: type, text: value, scale: 3,
+                 height: 10, width: 10, includetext: false,
              };
              bwipjs.toCanvas(canvas, { ...defaultOptions, ...options });
         }
@@ -301,6 +288,14 @@
             const markenVal = generateMarkenTracking();
             document.getElementById('markenValue').textContent = markenVal;
             render1DBarcode('markenBarcode', markenVal, { format: "CODE128" });
+            
+            const wcVal = generateWorldCourierTracking();
+            document.getElementById('worldCourierValue').textContent = wcVal;
+            render1DBarcode('worldCourierBarcode', wcVal, { format: "CODE128" });
+
+            const quickstatVal = generateQuickstatTracking();
+            document.getElementById('quickstatValue').textContent = quickstatVal;
+            render1DBarcode('quickstatBarcode', quickstatVal, { format: "CODE128" });
         }
 
         // --- Focused View Logic ---
@@ -382,6 +377,12 @@
                     renderOptions = { format: "CODE128", height: 150, width: 4 }; break;
                 case 'marken':
                     title = 'Marken Tracking'; generatorFn = generateMarkenTracking;
+                    renderOptions = { format: "CODE128", height: 150, width: 4 }; break;
+                case 'worldcourier':
+                    title = 'World Courier'; generatorFn = generateWorldCourierTracking;
+                    renderOptions = { format: "CODE128", height: 150, width: 4 }; break;
+                case 'quickstat':
+                    title = 'Quickstat'; generatorFn = generateQuickstatTracking;
                     renderOptions = { format: "CODE128", height: 150, width: 4 }; break;
             }
 
