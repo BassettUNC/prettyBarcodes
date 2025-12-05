@@ -91,7 +91,7 @@
             </div>
         </section>
 
-        <section>
+        <section class="mb-12">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 border-b-2 border-gray-200 dark:border-gray-700 pb-2">Shipment Tracking Labels</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
                 <div onclick="showFocusedView('ups')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
@@ -126,6 +126,18 @@
                 </div>
             </div>
         </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6 border-b-2 border-gray-200 dark:border-gray-700 pb-2">Sponsor / Lab Specific</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+                <div onclick="showFocusedView('mlm')" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center text-center transition-transform transform hover:scale-105 cursor-pointer">
+                    <h3 class="text-xl font-semibold mb-4 text-teal-600 dark:text-teal-400">MLM</h3>
+                    <div class="w-full h-28 flex items-center justify-center"><svg id="mlmBarcode"></svg></div>
+                    <p id="mlmValue" class="mt-4 text-lg font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-md"></p>
+                </div>
+            </div>
+        </section>
+
     </div>
 
     <div id="focusedView" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex-col items-center justify-center p-8 hidden z-50">
@@ -173,16 +185,19 @@
         function generateCode128Value() { return generateRandomAlphanumeric(GENERIC_BARCODE_LENGTH); }
         function generate2DCodeValue() { return generateRandomAlphanumeric(QR_DATA_LENGTH); }
 
-        // --- CORRECTED AWB GENERATORS ---
-        function generateUPSTracking() { return '1Z' + generateRandomAlphanumeric(16, true); } // Regex: ^(1Z[\dA-Z]{16})$
-        function generateFedExTracking() { return generateRandomNumeric(12); } // Regex: ^\d{10,}$ (using common 12-digit format)
-        function generateDHLTracking() { return generateRandomNumeric(10); } // Regex: ^[\dA-Za-z]{7,}$ (using common 10-digit format)
-        function generateMarkenTracking() { return generateRandomNumeric(3) + 'X' + generateRandomNumeric(8); } // Regex: ^([\d]{3}X[\d]{8})$
+        // --- AWB GENERATORS ---
+        function generateUPSTracking() { return '1Z' + generateRandomAlphanumeric(16, true); } 
+        function generateFedExTracking() { return generateRandomNumeric(12); } 
+        function generateDHLTracking() { return generateRandomNumeric(10); } 
+        function generateMarkenTracking() { return generateRandomNumeric(3) + 'X' + generateRandomNumeric(8); } 
         function generateWorldCourierTracking() {
-            const length = Math.floor(Math.random() * 3) + 9; // Random length: 9, 10, or 11
-            return generateRandomNumeric(length); // Regex: ^\d{9,11}$
+            const length = Math.floor(Math.random() * 3) + 9; 
+            return generateRandomNumeric(length); 
         }
-        function generateQuickstatTracking() { return generateRandomNumeric(9) + 'W'; } // Regex: ^\d{9}W$
+        function generateQuickstatTracking() { return generateRandomNumeric(9) + 'W'; }
+        
+        // --- LAB SPECIFIC GENERATORS (Added MLM) ---
+        function generateMLMBarcode() { return generateRandomNumeric(12); }
 
 
         // --- Rendering Functions ---
@@ -296,6 +311,11 @@
             const quickstatVal = generateQuickstatTracking();
             document.getElementById('quickstatValue').textContent = quickstatVal;
             render1DBarcode('quickstatBarcode', quickstatVal, { format: "CODE128" });
+
+            // Lab Specific (MLM Added Here)
+            const mlmVal = generateMLMBarcode();
+            document.getElementById('mlmValue').textContent = mlmVal;
+            render1DBarcode('mlmBarcode', mlmVal, { format: "CODE128" });
         }
 
         // --- Focused View Logic ---
@@ -383,6 +403,11 @@
                     renderOptions = { format: "CODE128", height: 150, width: 4 }; break;
                 case 'quickstat':
                     title = 'Quickstat'; generatorFn = generateQuickstatTracking;
+                    renderOptions = { format: "CODE128", height: 150, width: 4 }; break;
+                
+                // --- ADDED MLM CASE ---
+                case 'mlm':
+                    title = 'MLM'; generatorFn = generateMLMBarcode;
                     renderOptions = { format: "CODE128", height: 150, width: 4 }; break;
             }
 
